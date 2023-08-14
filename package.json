@@ -1,0 +1,18 @@
+{
+  "name": "enhanced-simd",
+  "version": "1.0.0",
+  "description": "Enhancement of the [simulated SIMD](https://github.com/TracyGJG/sim-simd) project, as documented in this [Dev.To]() post to support multiple data sources.",
+  "main": "esimd-cached.js",
+  "scripts": {
+    "test": "jest",
+    "cover": "jest --collectCoverage"
+  },
+  "keywords": [
+    "simd"
+  ],
+  "author": "Tracy-Gregory Gilmore",
+  "license": "MIT",
+  "dependencies": {
+    "jest": "^29.6.2"
+  }
+}

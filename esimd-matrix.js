@@ -8,19 +8,10 @@ const ExecutionMode = {
 // export default 
 function ess(
   instruction, 
-  executionMode = ExecutionMode.NO_CACHE
+  _executionMode = ExecutionMode.NO_CACHE
 ) {
-  // let caches = [...Array(instruction.length)].fill([]);
-
   return async function (...dataSources) {
-    checkAlignment(dataSources);
-
-    let dataFeeds = 
-    // (executionMode === ExecutionMode.CACHED)
-      // ? caches.map((cache, index) => [...cache, ...structuredClone(dataSources[index])])
-      // : 
-      structuredClone(dataSources);
-    // caches = dataFeeds;
+    let dataFeeds = structuredClone(dataSources);
 
     const executions = permute(instruction, dataFeeds);
 
@@ -51,36 +42,7 @@ function ess(
       })
     }
   }
-
-  function checkAlignment(dataFeeds) {
-    if (dataFeeds.length !== instruction.length) {
-      throw Error('ess: Error - Mismatch between the number of data feeds and the parameters of the instruction')
-    }
-  }
 }
 
-async function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function process(a,b,c) {
-  const hexValue = `${a}${b}${c}`;
-  const decValue = parseInt(hexValue, 16);
-  const result = `${hexValue} = ${decValue}`;
-  console.log(result);
-  await sleep(decValue);
-  console.log(result);
-  return result;
-}
-
-const essProcess = ess(process, ExecutionMode.MATRIX);
-
-const dataFeed = [
-  ['A', 'B'],
-  ['C', 'D', 'E'],
-  ['F', '0', '1', '2']
-];
-
-(async () => {
-  console.log(JSON.stringify(await essProcess(...dataFeed), null, 2));
-})();
+exports.ess = ess;
+exports.ExecutionMode = ExecutionMode;

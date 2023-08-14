@@ -76,53 +76,5 @@ function validateResults(executionResults) {
     }
 }
 
-// Testing
-
-async function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function process(a,b,c) {
-    const hexValue = `${a}${b}${c}`;
-    const decValue = parseInt(hexValue, 16);
-    const result = `${hexValue} = ${decValue}`;
-    console.log(result);
-    await sleep(decValue);
-    console.log(result);
-    return result;
-}
-
-const dataFeed = [
-    ['A', 'B'],
-    ['C', 'D', 'E'],
-    ['F', '0', '1', '2']
-];
-  
-// {
-//     console.log('\nNo Caching');
-//     const essProcess = ess(process);
-
-//     (async () => {
-//         console.table(await essProcess(...dataFeed));
-//         console.table(await essProcess(...dataFeed.reverse()));
-//     })();
-// }
-
-// {
-//     console.log('\nCached');
-//     const essProcess = ess(process, ExecutionMode.CACHED);
-
-//     (async () => {
-//         console.table(await essProcess(...dataFeed));
-//         console.table(await essProcess(...dataFeed.reverse()));
-//     })();
-// }
-
-{
-    console.log('\nMatrix');
-    const essProcess = ess(process, ExecutionMode.MATRIX);
-
-    (async () => {
-        console.log(JSON.stringify(await essProcess(...dataFeed), null, 2));
-    })();
-}
+exports.ess = ess;
+exports.ExecutionMode = ExecutionMode;
