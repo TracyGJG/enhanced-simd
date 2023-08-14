@@ -27,7 +27,7 @@ function ess(
     const buffers = axies.map(axis => axis.splice(0, minAxisLength));
 
     return _transposeArray(buffers).map(
-      buffer => _executeInstruction(fn, buffer)
+      _executeInstruction(fn)
     );
 
     function _transposeArray(matrix) {
@@ -37,8 +37,8 @@ function ess(
       );
     }
 
-    function _executeInstruction(fnInstruction, buffers) {
-      return  new Promise((resolve, reject) => {
+    function _executeInstruction(fnInstruction) {
+      return (buffers) => new Promise((resolve, reject) => {
         try {
           resolve(fnInstruction(...buffers));
         } catch (error) {

@@ -22,11 +22,11 @@ function ess(
 
     function _permute(...buffers) {
       return (buffers.length === axies.length)
-      ? _executeInstruction(fn, buffers)
+      ? executeInstruction(fn, buffers)
       : axies[buffers.length].map(datum => _permute(...buffers, datum));
     }
 
-    function _executeInstruction(fnInstruction, buffers) {
+    function executeInstruction(fnInstruction, buffers) {
       return  new Promise((resolve, reject) => {
         try {
           resolve(fnInstruction(...buffers));

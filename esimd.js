@@ -1,11 +1,9 @@
-// export 
 const ExecutionMode = {
     NO_CACHE: 0,
     CACHED: 1,
     MATRIX: 2,
   };
   
-// export default 
 function ess(
     instruction, 
     executionMode = ExecutionMode.NO_CACHE
@@ -36,14 +34,14 @@ function permute(fn, axies) {
     function _permute(...buffers) {
         const buffersLength = buffers.length;
         return ((buffersLength === axies.length)
-            ? _executeInstruction(fn, buffers)
+            ? executeInstruction(fn)(buffers)
             : axies[buffersLength].map(axis => _permute(...buffers, axis)));
     }
 }
 
 function transform(fn, axies) {
     return _transpose().map(
-        buffer => _executeInstruction(fn, buffer)
+        executeInstruction(fn)
     );
 
     function _transpose() {
@@ -54,8 +52,8 @@ function transform(fn, axies) {
     }
 }
 
-function _executeInstruction(fnInstruction, buffers) {
-    return  new Promise((resolve, reject) => {
+function executeInstruction(fnInstruction) {
+    return (buffers) => new Promise((resolve, reject) => {
         try {
             resolve(fnInstruction(...buffers));
         } catch (error) {

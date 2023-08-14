@@ -10,14 +10,7 @@ function ess(
     const buffers = dataFeeds.map(dataFeed => dataFeed.splice(0, minDataFeedLength));
 
     const executions = transposeArray(buffers).map(
-      buffer =>
-      new Promise((resolve, reject) => {
-        try {
-          resolve(instruction(...buffer));
-        } catch (error) {
-          reject(error);
-        }
-      })
+      executeInstruction(instruction)
     );
     const results = await Promise.allSettled(executions);
     return results.map(result => result.value);
@@ -28,6 +21,16 @@ function ess(
       (_, row) => row.map((__, i) => [...(_[i] || []), row[i]]),
       []
     );
+  }
+
+  function executeInstruction(fnInstruction) {
+    return (dataset) => new Promise((resolve, reject) => {
+      try {
+        resolve(fnInstruction(...dataset));
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }
 
