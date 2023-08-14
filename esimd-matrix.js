@@ -1,11 +1,9 @@
-// export 
 const ExecutionMode = {
   NO_CACHE: 0,
   CACHED: 1,
   MATRIX: 2,
 };
 
-// export default 
 function ess(
   instruction, 
   _executionMode = ExecutionMode.NO_CACHE
