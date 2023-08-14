@@ -21,10 +21,6 @@ function ess(
     const executions = transform(instruction, dataFeeds);
 
     const results = await Promise.allSettled(executions);
-
-    if (results.some(result => result.status !== 'fulfilled')) {
-      throw Error('ess: Error - Instruction execution failed');
-    }
     return results.map(result => result.value);
   };
 
@@ -55,9 +51,5 @@ function ess(
   }
 }
 
-const essProcess = ess(testProcess.process, ExecutionMode.CACHED);
-
-(async () => {
-  console.table(await essProcess(...dataFeed));
-  console.table(await essProcess(...dataFeed.reverse()));
-})();
+exports.ess = ess;
+exports.ExecutionMode = ExecutionMode;

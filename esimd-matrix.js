@@ -16,10 +16,6 @@ function ess(
     const executions = permute(instruction, dataFeeds);
 
     const results = await Promise.allSettled(executions);
-
-    if (results.some(result => result.status !== 'fulfilled')) {
-      throw Error('ess: Error - Instruction execution failed');
-    }
     return results.map(result => result.value);      
   };
 
