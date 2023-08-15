@@ -4,7 +4,7 @@ const ExecutionMode = {
     MATRIX: 2,
   };
   
-function ess(
+function esimd(
     instruction, 
     executionMode = ExecutionMode.NO_CACHE
 ) {
@@ -13,10 +13,14 @@ function ess(
     return async function (...dataSources) {
         checkAlignment(instruction.length, dataSources);
 
-        let dataFeeds = (executionMode === ExecutionMode.CACHED)
-            ? caches.map((cache, index) => [...cache, ...structuredClone(dataSources[index])])
-            : structuredClone(dataSources);
-        caches = dataFeeds;
+        let dataFeeds;
+        if (executionMode === ExecutionMode.CACHED) {
+            dataFeeds = caches.map((cache, index) => [...cache, ...structuredClone(dataSources[index])]);
+            caches = dataFeeds;    
+        }
+        else {
+            dataFeeds = structuredClone(dataSources);
+        }
 
         const executions = (executionMode === ExecutionMode.MATRIX
             ? permute : transform)(instruction, dataFeeds);
@@ -64,15 +68,15 @@ function executeInstruction(fnInstruction) {
 
 function checkAlignment(numParams, dataFeeds) {
     if (dataFeeds.length !== numParams) {
-        throw Error('ess: Error - Mismatch between the number of data feeds and the parameters of the instruction');
+        throw Error('esimd: Error - Mismatch between the number of data feeds and the parameters of the instruction');
     }
 }
 
 function validateResults(executionResults) {
     if (executionResults.some(result => result.status !== 'fulfilled')) {
-        throw Error('ess: Error - Instruction execution failed');
+        throw Error('esimd: Error - Instruction execution failed');
     }
 }
 
-exports.ess = ess;
+exports.esimd = esimd;
 exports.ExecutionMode = ExecutionMode;

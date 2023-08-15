@@ -3,7 +3,7 @@ Enhancement of the [simulated SIMD](https://github.com/TracyGJG/sim-simd) projec
 
 In the original post, the simd function accepted an instruction (function) argument on first call and returned a simd enabled function (simd-instruction) in respose. The simd-instruction expected to be called with an array of data object it would pass to the original instruction, like an `Array.map` method but wrappend in a `Promise` to enable near-parallel execution.
 
-The enhanced edition (ess) similarly, accepts an instruction and return a simd-enabled version. However, the new function expects to be passed multiple data sources (arrays) and (optionally) an indication on how to manage them (no-cache, cached or matrix). The original instruction is expecting to be called with multiple values, one from each array in the no-cache/chached mode, but only once. In the Matrix mode, the instruction is presented with a value from each input data source but in all possible permutations.
+The enhanced edition (esimd) similarly, accepts an instruction and return a simd-enabled version. However, the new function expects to be passed multiple data sources (arrays) and (optionally) an indication on how to manage them (no-cache, cached or matrix). The original instruction is expecting to be called with multiple values, one from each array in the no-cache/chached mode, but only once. In the Matrix mode, the instruction is presented with a value from each input data source but in all possible permutations.
 
 ---
 

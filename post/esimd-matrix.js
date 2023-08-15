@@ -4,7 +4,7 @@ const ExecutionMode = {
   MATRIX: 2,
 };
 
-function ess(
+function esimd(
   instruction, 
   _executionMode = ExecutionMode.NO_CACHE
 ) {
@@ -38,5 +38,5 @@ function ess(
   }
 }
 
-exports.ess = ess;
+exports.esimd = esimd;
 exports.ExecutionMode = ExecutionMode;

@@ -1,4 +1,4 @@
-function ess(
+function esimd(
   instruction
 ) {
 
@@ -34,4 +34,4 @@ function ess(
   }
 }
 
-exports.ess = ess;
+exports.esimd = esimd;

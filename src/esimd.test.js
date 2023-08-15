@@ -27,9 +27,9 @@ describe('Esimd', () => {
             expect(Esimd.ExecutionMode.MATRIX).toBe(2);
         });
 
-        test('has an ess method', () => {
-            expect(Esimd.ess).toBeDefined();
-            expect(typeof Esimd.ess).toBe('function');
+        test('has an esimd method', () => {
+            expect(Esimd.esimd).toBeDefined();
+            expect(typeof Esimd.esimd).toBe('function');
         });
     });
 
@@ -37,7 +37,7 @@ describe('Esimd', () => {
         let essInstruction;
 
         beforeEach(() => {
-            essInstruction = Esimd.ess(process);
+            essInstruction = Esimd.esimd(process);
         });
 
         test('with three empty arrays', async () => {
@@ -67,12 +67,12 @@ describe('Esimd', () => {
 
         test('with a mismatched input', async () => {
             const exceptionTest = () => essInstruction([], []);
-            expect(exceptionTest).rejects.toThrow('ess: Error - Mismatch between the number of data feeds and the parameters of the instruction');
+            expect(exceptionTest).rejects.toThrow('esimd: Error - Mismatch between the number of data feeds and the parameters of the instruction');
         });
 
         test('with a failed execution', async () => {
             const exceptionTest = () => essInstruction(['a', 'b'], ['c', 'd'], ['e', ' ']);
-            expect(exceptionTest).rejects.toThrow('ess: Error - Instruction execution failed');
+            expect(exceptionTest).rejects.toThrow('esimd: Error - Instruction execution failed');
         });
     });
 
@@ -80,7 +80,7 @@ describe('Esimd', () => {
         let essInstruction;
 
         beforeEach(() => {
-            essInstruction = Esimd.ess(process, Esimd.ExecutionMode.CACHED);
+            essInstruction = Esimd.esimd(process, Esimd.ExecutionMode.CACHED);
         });
 
         test('with three empty arrays', async () => {
@@ -115,7 +115,7 @@ describe('Esimd', () => {
         let essInstruction;
 
         beforeEach(() => {
-            essInstruction = Esimd.ess(process, Esimd.ExecutionMode.MATRIX);
+            essInstruction = Esimd.esimd(process, Esimd.ExecutionMode.MATRIX);
         });
 
         test('with three empty arrays', async () => {
