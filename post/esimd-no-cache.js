@@ -1,20 +1,18 @@
-function esimd(
-  instruction
-) {
-
+function esimd(instruction) {
   return async function (...dataSources) {
     let dataFeeds = structuredClone(dataSources);
 
-    const dataFeedLengths = dataFeeds.map(dataFeed => dataFeed.length);
+    const dataFeedLengths = dataFeeds.map((dataFeed) => dataFeed.length);
     const minDataFeedLength = Math.min(...dataFeedLengths);
-    const buffers = dataFeeds.map(dataFeed => 
-      dataFeed.splice(0, minDataFeedLength));
+    const buffers = dataFeeds.map((dataFeed) =>
+      dataFeed.splice(0, minDataFeedLength)
+    );
 
     const executions = transposeArray(buffers).map(
       _executeInstruction(instruction)
     );
     const results = await Promise.allSettled(executions);
-    return results.map(result => result.value);
+    return results.map((result) => result.value);
   };
 
   function transposeArray(matrix) {
@@ -25,13 +23,14 @@ function esimd(
   }
 
   function _executeInstruction(fnInstruction) {
-    return (dataset) => new Promise(async (resolve, reject) => {
-      try {
-        resolve(await fnInstruction(...dataset));
-      } catch (error) {
-        reject(error);
-      }
-    });
+    return (dataset) =>
+      new Promise(async (resolve, reject) => {
+        try {
+          resolve(await fnInstruction(...dataset));
+        } catch (error) {
+          reject(error);
+        }
+      });
   }
 }
 
