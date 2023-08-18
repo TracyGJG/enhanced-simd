@@ -7,7 +7,8 @@ function esimd(
 
     const dataFeedLengths = dataFeeds.map(dataFeed => dataFeed.length);
     const minDataFeedLength = Math.min(...dataFeedLengths);
-    const buffers = dataFeeds.map(dataFeed => dataFeed.splice(0, minDataFeedLength));
+    const buffers = dataFeeds.map(dataFeed => 
+      dataFeed.splice(0, minDataFeedLength));
 
     const executions = transposeArray(buffers).map(
       _executeInstruction(instruction)

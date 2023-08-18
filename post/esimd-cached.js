@@ -4,7 +4,8 @@ function esimd(
   let caches = [...Array(instruction.length)].fill([]);
 
   return async function (...dataSources) {
-    let dataFeeds = caches.map((cache, index) => [...cache, ...structuredClone(dataSources[index])]);
+    let dataFeeds = caches.map((cache, index) => 
+      [...cache, ...structuredClone(dataSources[index])]);
     caches = dataFeeds;
 
     const executions = transform(instruction, dataFeeds);
