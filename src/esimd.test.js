@@ -130,5 +130,52 @@ describe('Esimd', () => {
             expect(result[1]).toBe('AC0');
             expect(result[23]).toBe('BE2');
         });
+
+        test('reports an exception when too many data feeds are supplied for a matrix', () => {
+            const instruction = (_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k) => '';
+            const essInstruction2 = Esimd.esimd(instruction, Esimd.ExecutionMode.MATRIX);
+            const args = [
+                ['A', 'B'], ['C', 'D'], 
+                ['E', 'F'], ['G', 'H'],
+                ['I', 'J'], ['K', 'L'],
+                ['M', 'N'], ['O', 'P'],
+                ['Q', 'R'], ['S', 'T'],
+                ['U', 'V']
+            ];
+
+            const exceptionTest = async () =>
+                await essInstruction2(...args);
+
+            expect(exceptionTest)
+            .rejects
+            .toThrow("esimd: Error - The number of data feeds exceeds the maximum of 10."); 
+        });
+
+        test('reports an exception when a data feed is too large', () => {
+            expect(async () => {
+                await essInstruction(
+                    ['A', 'B'], ['C', 'D'], 
+                    ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O']);
+              }).rejects.toThrow('esimd: Error - On or more of the data feeds exceeds the maximum size of 10.');
+        });
+
+        test('reports an exception when the calculated size of the resultant matrix is too large', () => {
+            const instruction = (_a,_b,_c,_d,_e) => '';
+            const essInstruction2 = Esimd.esimd(instruction, Esimd.ExecutionMode.MATRIX);
+            const args = [
+                ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], 
+                ['K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'],
+                ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], 
+                ['K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'],
+                ['U', 'V']
+            ];
+
+            const exceptionTest = async () =>
+                await essInstruction2(...args);
+
+            expect(exceptionTest)
+            .rejects
+            .toThrow("esimd: Error - The calculated size of the output matrix exceeds the maximum size of 10000."); 
+        });
     });
 });

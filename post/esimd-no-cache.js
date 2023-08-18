@@ -24,9 +24,9 @@ function esimd(
   }
 
   function _executeInstruction(fnInstruction) {
-    return (dataset) => new Promise((resolve, reject) => {
+    return (dataset) => new Promise(async (resolve, reject) => {
       try {
-        resolve(fnInstruction(...dataset));
+        resolve(await fnInstruction(...dataset));
       } catch (error) {
         reject(error);
       }

@@ -1,19 +1,10 @@
-const ExecutionMode = {
-  NO_CACHE: 0,
-  CACHED: 1,
-  MATRIX: 2,
-};
-
 function esimd(
-  instruction, 
-  executionMode = ExecutionMode.NO_CACHE
+  instruction
 ) {
   let caches = [...Array(instruction.length)].fill([]);
 
   return async function (...dataSources) {
-    let dataFeeds = (executionMode === ExecutionMode.CACHED)
-      ? caches.map((cache, index) => [...cache, ...structuredClone(dataSources[index])])
-      : structuredClone(dataSources);
+    let dataFeeds = caches.map((cache, index) => [...cache, ...structuredClone(dataSources[index])]);
     caches = dataFeeds;
 
     const executions = transform(instruction, dataFeeds);
@@ -38,9 +29,9 @@ function esimd(
     }
 
     function _executeInstruction(fnInstruction) {
-      return (buffers) => new Promise((resolve, reject) => {
+      return (buffers) => new Promise(async (resolve, reject) => {
         try {
-          resolve(fnInstruction(...buffers));
+          resolve(await fnInstruction(...buffers));
         } catch (error) {
           reject(error);
         }
@@ -50,4 +41,3 @@ function esimd(
 }
 
 exports.esimd = esimd;
-exports.ExecutionMode = ExecutionMode;

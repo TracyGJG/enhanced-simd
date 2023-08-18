@@ -1,12 +1,5 @@
-const ExecutionMode = {
-  NO_CACHE: 0,
-  CACHED: 1,
-  MATRIX: 2,
-};
-
 function esimd(
-  instruction, 
-  _executionMode = ExecutionMode.NO_CACHE
+  instruction
 ) {
   return async function (...dataSources) {
     let dataFeeds = structuredClone(dataSources);
@@ -27,9 +20,9 @@ function esimd(
     }
 
     function _executeInstruction(fnInstruction, buffers) {
-      return  new Promise((resolve, reject) => {
+      return  new Promise(async (resolve, reject) => {
         try {
-          resolve(fnInstruction(...buffers));
+          resolve(await fnInstruction(...buffers));
         } catch (error) {
           reject(error);
         }
@@ -39,4 +32,3 @@ function esimd(
 }
 
 exports.esimd = esimd;
-exports.ExecutionMode = ExecutionMode;
