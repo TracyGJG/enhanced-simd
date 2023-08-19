@@ -5,8 +5,7 @@
   "main": "esimd.js",
   "scripts": {
     "test": "jest",
-    "cover": "jest --collectCoverage",
-    "prettify": "prettier . --write"
+    "cover": "jest --collectCoverage"
   },
   "keywords": [
     "simd"
