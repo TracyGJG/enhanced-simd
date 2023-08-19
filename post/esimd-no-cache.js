@@ -9,29 +9,29 @@ function esimd(instruction) {
     );
 
     const executions = transposeArray(buffers).map(
-      _executeInstruction(instruction)
+      executeInstruction(instruction)
     );
     const results = await Promise.allSettled(executions);
     return results.map((result) => result.value);
   };
+}
 
-  function transposeArray(matrix) {
-    return matrix.reduce(
-      (_, row) => row.map((__, i) => [...(_[i] || []), row[i]]),
-      []
-    );
-  }
+function transposeArray(matrix) {
+  return matrix.reduce(
+    (_, row) => row.map((__, i) => [...(_[i] || []), row[i]]),
+    []
+  );
+}
 
-  function _executeInstruction(fnInstruction) {
-    return (dataset) =>
-      new Promise(async (resolve, reject) => {
-        try {
-          resolve(await fnInstruction(...dataset));
-        } catch (error) {
-          reject(error);
-        }
-      });
-  }
+function executeInstruction(fnInstruction) {
+  return (dataset) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        resolve(await fnInstruction(...dataset));
+      } catch (error) {
+        reject(error);
+      }
+    });
 }
 
 exports.esimd = esimd;
