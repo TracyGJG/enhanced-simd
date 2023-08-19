@@ -1,3 +1,5 @@
+const supportingFunctions = require('../supportingFunctions.js');
+
 const ExecutionMode = {
   NO_CACHE: 0,
   CACHED: 1,
@@ -29,7 +31,9 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
     }
 
     const executions = (
-      executionMode === ExecutionMode.MATRIX ? permute : transform
+      executionMode === ExecutionMode.MATRIX
+        ? supportingFunctions.permute
+        : supportingFunctions.transform
     )(instruction, dataFeeds);
 
     const results = await Promise.allSettled(executions);
@@ -39,45 +43,6 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
     }
     return results.map((result) => result.value);
   };
-}
-
-function permute(fn, dataFeeds) {
-  const dataFeedLength = dataFeeds.length;
-  return _permute().flat(dataFeedLength - 1);
-
-  function _permute(...buffers) {
-    const buffersLength = buffers.length;
-    return buffersLength === dataFeedLength
-      ? executeInstruction(fn)(buffers)
-      : dataFeeds[buffersLength].map((dataFeed) =>
-          _permute(...buffers, dataFeed)
-        );
-  }
-}
-
-function transform(fn, dataFeeds) {
-  const minDataFeedLength = Math.min(
-    ...dataFeeds.map((dataFeed) => dataFeed.length)
-  );
-  const buffers = dataFeeds.map((dataFeed) =>
-    dataFeed.splice(0, minDataFeedLength)
-  );
-
-  const swapRowColumn = (_, row) =>
-    row.map((__, i) => [...(_[i] || []), row[i]]);
-
-  return buffers.reduce(swapRowColumn, []).map(executeInstruction(fn));
-}
-
-function executeInstruction(fnInstruction) {
-  return (dataset) =>
-    new Promise(async (resolve, reject) => {
-      try {
-        resolve(await fnInstruction(...dataset));
-      } catch (error) {
-        reject(error);
-      }
-    });
 }
 
 function checkAlignment(numParams, dataFeeds) {
