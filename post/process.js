@@ -1,7 +1,7 @@
-async function process(a,b,c) {
+async function process(a, b, c) {
   const result = `${a}${b}${c}`;
   if (result === '666') {
-      throw Error('Number of the beast');
+    throw Error('Number of the beast');
   }
   return result;
 }
