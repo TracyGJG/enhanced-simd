@@ -2,9 +2,10 @@ const supportingFunctions = require('../src/supportingFunctions.js');
 
 function esimd(instruction) {
   let caches = [...Array(instruction.length)].fill([]);
+  let dataFeeds;
 
   return async function (...dataSources) {
-    let dataFeeds = caches.map((cache, index) => [
+    dataFeeds = caches.map((cache, index) => [
       ...cache,
       ...structuredClone(dataSources[index]),
     ]);

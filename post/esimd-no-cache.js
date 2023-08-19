@@ -1,11 +1,11 @@
 const supportingFunctions = require('../src/supportingFunctions.js');
 
 function esimd(instruction) {
+  let dataFeeds;
+
   return async function (...dataSources) {
-    const executions = supportingFunctions.transform(
-      instruction,
-      structuredClone(dataSources)
-    );
+    dataFeeds = structuredClone(dataSources);
+    const executions = supportingFunctions.transform(instruction, dataFeeds);
     const results = await Promise.allSettled(executions);
     return results.map((result) => result.value);
   };

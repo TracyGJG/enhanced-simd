@@ -11,23 +11,20 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
   let dataFeeds;
 
   return async function (...dataSources) {
-    const alignmentError = checkAlignment(instruction.length, dataSources);
+    dataFeeds = structuredClone(dataSources);
+
+    const alignmentError = checkAlignment(instruction.length, dataFeeds);
     if (alignmentError) {
       throw alignmentError;
     }
-    const capacityError = checkCapacity(executionMode, dataSources);
+    const capacityError = checkCapacity(executionMode, dataFeeds);
     if (capacityError) {
       throw capacityError;
     }
 
     if (executionMode === ExecutionMode.CACHED) {
-      dataFeeds = caches.map((cache, index) => [
-        ...cache,
-        ...structuredClone(dataSources[index]),
-      ]);
+      dataFeeds = caches.map((cache, index) => [...cache, ...dataFeeds[index]]);
       caches = dataFeeds;
-    } else {
-      dataFeeds = structuredClone(dataSources);
     }
 
     const executions = (
