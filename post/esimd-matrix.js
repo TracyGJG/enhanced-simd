@@ -8,24 +8,26 @@ function esimd(instruction) {
     return results.map((result) => result.value);
   };
 }
+
 function permute(fn, axies) {
   return _permute().flat(axies.length - 1);
 
   function _permute(...buffers) {
     return buffers.length === axies.length
-      ? executeInstruction(fn, buffers)
+      ? executeInstruction(fn)(buffers)
       : axies[buffers.length].map((datum) => _permute(...buffers, datum));
   }
 }
 
-function executeInstruction(fnInstruction, buffers) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      resolve(await fnInstruction(...buffers));
-    } catch (error) {
-      reject(error);
-    }
-  });
+function executeInstruction(fnInstruction) {
+  return (dataset) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        resolve(await fnInstruction(...dataset));
+      } catch (error) {
+        reject(error);
+      }
+    });
 }
 
 exports.esimd = esimd;

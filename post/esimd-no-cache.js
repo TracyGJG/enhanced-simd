@@ -8,19 +8,21 @@ function esimd(instruction) {
       dataFeed.splice(0, minDataFeedLength)
     );
 
-    const executions = transposeArray(buffers).map(
-      executeInstruction(instruction)
-    );
+    const executions = transform(instruction, buffers);
     const results = await Promise.allSettled(executions);
     return results.map((result) => result.value);
   };
 }
 
-function transposeArray(matrix) {
-  return matrix.reduce(
-    (_, row) => row.map((__, i) => [...(_[i] || []), row[i]]),
-    []
-  );
+function transform(fn, buffers) {
+  return _transposeArray(buffers).map(executeInstruction(fn));
+
+  function _transposeArray(matrix) {
+    return matrix.reduce(
+      (_, row) => row.map((__, i) => [...(_[i] || []), row[i]]),
+      []
+    );
+  }
 }
 
 function executeInstruction(fnInstruction) {

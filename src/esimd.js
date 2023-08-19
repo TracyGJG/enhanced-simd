@@ -6,6 +6,7 @@ const ExecutionMode = {
 
 function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
   let caches = [...Array(instruction.length)].fill([]);
+  let dataFeeds;
 
   return async function (...dataSources) {
     const alignmentError = checkAlignment(instruction.length, dataSources);
@@ -17,7 +18,6 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
       throw capacityError;
     }
 
-    let dataFeeds;
     if (executionMode === ExecutionMode.CACHED) {
       dataFeeds = caches.map((cache, index) => [
         ...cache,
@@ -33,7 +33,6 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
     )(instruction, dataFeeds);
 
     const results = await Promise.allSettled(executions);
-
     const valiationError = validateResults(results);
     if (valiationError) {
       throw valiationError;
@@ -42,23 +41,29 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
   };
 }
 
-function permute(fn, axies) {
-  return _permute().flat(axies.length - 1);
+function permute(fn, dataFeeds) {
+  return _permute().flat(dataFeeds.length - 1);
 
   function _permute(...buffers) {
     const buffersLength = buffers.length;
-    return buffersLength === axies.length
+    return buffersLength === dataFeeds.length
       ? executeInstruction(fn)(buffers)
-      : axies[buffersLength].map((axis) => _permute(...buffers, axis));
+      : dataFeeds[buffersLength].map((dataFeed) =>
+          _permute(...buffers, dataFeed)
+        );
   }
 }
 
-function transform(fn, axies) {
+function transform(fn, dataFeeds) {
+  const minDataFeedLength = Math.min(
+    ...dataFeeds.map((dataFeed) => dataFeed.length)
+  );
+  const buffers = dataFeeds.map((dataFeed) =>
+    dataFeed.splice(0, minDataFeedLength)
+  );
   return _transpose().map(executeInstruction(fn));
 
   function _transpose() {
-    const minAxisLength = Math.min(...axies.map((axis) => axis.length));
-    const buffers = axies.map((axis) => axis.splice(0, minAxisLength));
     const swapRowColumn = (_, row) =>
       row.map((__, i) => [...(_[i] || []), row[i]]);
     return buffers.reduce(swapRowColumn, []);
@@ -67,9 +72,9 @@ function transform(fn, axies) {
 
 function executeInstruction(fnInstruction) {
   return (buffers) =>
-    new Promise((resolve, reject) => {
+    new Promise(async (resolve, reject) => {
       try {
-        resolve(fnInstruction(...buffers));
+        resolve(await fnInstruction(...buffers));
       } catch (error) {
         reject(error);
       }
