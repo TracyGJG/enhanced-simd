@@ -26,13 +26,11 @@ function transform(fn, dataFeeds) {
   const buffers = dataFeeds.map((dataFeed) =>
     dataFeed.splice(0, minDataFeedLength)
   );
-  return _transpose(buffers).map(executeInstruction(fn));
 
-  function _transpose(matrix) {
-    const swapRowColumn = (_, row) =>
-      row.map((__, i) => [...(_[i] || []), row[i]]);
-    return matrix.reduce(swapRowColumn, []);
-  }
+  const swapRowColumn = (_, row) =>
+    row.map((__, i) => [...(_[i] || []), row[i]]);
+
+  return buffers.reduce(swapRowColumn, []).map(executeInstruction(fn));
 }
 
 function executeInstruction(fnInstruction) {

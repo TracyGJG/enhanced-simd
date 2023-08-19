@@ -15,13 +15,10 @@ function esimd(instruction) {
 }
 
 function transform(fn, buffers) {
-  return _transposeArray(buffers).map(executeInstruction(fn));
+  const swapRowColumn = (_, row) =>
+    row.map((__, i) => [...(_[i] || []), row[i]]);
 
-  function _transposeArray(matrix) {
-    const swapRowColumn = (_, row) =>
-      row.map((__, i) => [...(_[i] || []), row[i]]);
-    return matrix.reduce(swapRowColumn, []);
-  }
+  return buffers.reduce(swapRowColumn, []).map(executeInstruction(fn));
 }
 
 function executeInstruction(fnInstruction) {

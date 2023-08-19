@@ -7,11 +7,12 @@ function esimd(instruction) {
 }
 
 function permute(fn, dataFeeds) {
-  return _permute().flat(dataFeeds.length - 1);
+  const dataFeedLength = dataFeeds.length;
+  return _permute().flat(dataFeedLength - 1);
 
   function _permute(...buffers) {
     const buffersLength = buffers.length;
-    return buffersLength === dataFeeds.length
+    return buffersLength === dataFeedLength
       ? executeInstruction(fn)(buffers)
       : dataFeeds[buffersLength].map((dataFeed) =>
           _permute(...buffers, dataFeed)
