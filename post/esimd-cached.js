@@ -8,21 +8,20 @@ function esimd(instruction) {
     ]);
     caches = dataFeeds;
 
-    const minDataFeedLength = Math.min(
-      ...dataFeeds.map((dataFeed) => dataFeed.length)
-    );
-    const buffers = dataFeeds.map((dataFeed) =>
-      dataFeed.splice(0, minDataFeedLength)
-    );
-
-    const executions = transform(instruction, buffers);
+    const executions = transform(instruction, dataFeeds);
 
     const results = await Promise.allSettled(executions);
     return results.map((result) => result.value);
   };
 }
 
-function transform(fn, buffers) {
+function transform(fn, dataFeeds) {
+  const minDataFeedLength = Math.min(
+    ...dataFeeds.map((dataFeed) => dataFeed.length)
+  );
+  const buffers = dataFeeds.map((dataFeed) =>
+    dataFeed.splice(0, minDataFeedLength)
+  );
   return _transposeArray(buffers).map(executeInstruction(fn));
 
   function _transposeArray(matrix) {
