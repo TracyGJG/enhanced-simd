@@ -1,4 +1,4 @@
-const supportingFunctions = require('../supportingFunctions.js');
+const supportingFunctions = require('../src/supportingFunctions.js');
 
 function esimd(instruction) {
   return async function (...dataSources) {

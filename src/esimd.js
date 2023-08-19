@@ -1,4 +1,4 @@
-const supportingFunctions = require('../supportingFunctions.js');
+const supportingFunctions = require('./supportingFunctions.js');
 
 const ExecutionMode = {
   NO_CACHE: 0,
