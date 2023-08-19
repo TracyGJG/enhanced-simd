@@ -46,6 +46,8 @@ describe('Esimd', () => {
     });
 
     test('with three populated arrays', async () => {
+      expect.assertions(3);
+
       const result = await esimdInstruction(...testData.populated);
       expect(result.length).toBe(2);
       expect(result[0]).toBe('ACF');
@@ -53,6 +55,8 @@ describe('Esimd', () => {
     });
 
     test('with three populated arrays (without caching)', async () => {
+      expect.assertions(6);
+
       let result = await esimdInstruction(...testData.populated);
       expect(result.length).toBe(2);
       expect(result[0]).toBe('ACF');
@@ -93,7 +97,9 @@ describe('Esimd', () => {
       expect(result.length).toBe(0);
     });
 
-    test('with three populated arrays', async () => {
+    test('with three populated arrays (without caching)', async () => {
+      expect.assertions(3);
+
       const result = await esimdInstruction(...testData.populated);
       expect(result.length).toBe(2);
       expect(result[0]).toBe('ACF');
@@ -101,6 +107,8 @@ describe('Esimd', () => {
     });
 
     test('with three populated arrays (without caching)', async () => {
+      expect.assertions(8);
+
       let result = await esimdInstruction(...testData.populated);
       expect(result.length).toBe(2);
       expect(result[0]).toBe('ACF');
@@ -129,6 +137,8 @@ describe('Esimd', () => {
     });
 
     test('with three populated arrays', async () => {
+      expect.assertions(4);
+
       const result = await esimdInstruction(...testData.populated);
       expect(result.length).toBe(24);
       expect(result[0]).toBe('ACF');
