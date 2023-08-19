@@ -1,21 +1,21 @@
 function esimd(instruction) {
   return async function (...dataSources) {
-    let dataFeeds = structuredClone(dataSources);
-
-    const executions = permute(instruction, dataFeeds);
-
+    const executions = permute(instruction, structuredClone(dataSources));
     const results = await Promise.allSettled(executions);
     return results.map((result) => result.value);
   };
 }
 
-function permute(fn, axies) {
-  return _permute().flat(axies.length - 1);
+function permute(fn, dataFeeds) {
+  return _permute().flat(dataFeeds.length - 1);
 
   function _permute(...buffers) {
-    return buffers.length === axies.length
+    const buffersLength = buffers.length;
+    return buffersLength === dataFeeds.length
       ? executeInstruction(fn)(buffers)
-      : axies[buffers.length].map((datum) => _permute(...buffers, datum));
+      : dataFeeds[buffersLength].map((dataFeed) =>
+          _permute(...buffers, dataFeed)
+        );
   }
 }
 

@@ -61,20 +61,20 @@ function transform(fn, dataFeeds) {
   const buffers = dataFeeds.map((dataFeed) =>
     dataFeed.splice(0, minDataFeedLength)
   );
-  return _transpose().map(executeInstruction(fn));
+  return _transpose(buffers).map(executeInstruction(fn));
 
-  function _transpose() {
+  function _transpose(matrix) {
     const swapRowColumn = (_, row) =>
       row.map((__, i) => [...(_[i] || []), row[i]]);
-    return buffers.reduce(swapRowColumn, []);
+    return matrix.reduce(swapRowColumn, []);
   }
 }
 
 function executeInstruction(fnInstruction) {
-  return (buffers) =>
+  return (dataset) =>
     new Promise(async (resolve, reject) => {
       try {
-        resolve(await fnInstruction(...buffers));
+        resolve(await fnInstruction(...dataset));
       } catch (error) {
         reject(error);
       }

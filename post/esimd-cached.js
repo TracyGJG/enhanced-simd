@@ -6,14 +6,18 @@ function esimd(instruction) {
       ...cache,
       ...structuredClone(dataSources[index]),
     ]);
-    caches = dataFeeds;
+    caches.length = 0;
+    caches.push(...dataFeeds);
 
     const executions = transform(instruction, dataFeeds);
-
     const results = await Promise.allSettled(executions);
     return results.map((result) => result.value);
   };
 }
+
+// function cacheSurplus(cachedData, dataSources) {
+
+// }
 
 function transform(fn, dataFeeds) {
   const minDataFeedLength = Math.min(
@@ -22,13 +26,12 @@ function transform(fn, dataFeeds) {
   const buffers = dataFeeds.map((dataFeed) =>
     dataFeed.splice(0, minDataFeedLength)
   );
-  return _transposeArray(buffers).map(executeInstruction(fn));
+  return _transpose(buffers).map(executeInstruction(fn));
 
-  function _transposeArray(matrix) {
-    return matrix.reduce(
-      (_, row) => row.map((__, i) => [...(_[i] || []), row[i]]),
-      []
-    );
+  function _transpose(matrix) {
+    const swapRowColumn = (_, row) =>
+      row.map((__, i) => [...(_[i] || []), row[i]]);
+    return matrix.reduce(swapRowColumn, []);
   }
 }
 

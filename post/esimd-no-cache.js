@@ -1,9 +1,9 @@
 function esimd(instruction) {
   return async function (...dataSources) {
     let dataFeeds = structuredClone(dataSources);
-
-    const dataFeedLengths = dataFeeds.map((dataFeed) => dataFeed.length);
-    const minDataFeedLength = Math.min(...dataFeedLengths);
+    const minDataFeedLength = Math.min(
+      ...dataFeeds.map((dataFeed) => dataFeed.length)
+    );
     const buffers = dataFeeds.map((dataFeed) =>
       dataFeed.splice(0, minDataFeedLength)
     );
@@ -18,10 +18,9 @@ function transform(fn, buffers) {
   return _transposeArray(buffers).map(executeInstruction(fn));
 
   function _transposeArray(matrix) {
-    return matrix.reduce(
-      (_, row) => row.map((__, i) => [...(_[i] || []), row[i]]),
-      []
-    );
+    const swapRowColumn = (_, row) =>
+      row.map((__, i) => [...(_[i] || []), row[i]]);
+    return matrix.reduce(swapRowColumn, []);
   }
 }
 
