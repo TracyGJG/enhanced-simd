@@ -69,14 +69,14 @@ describe('Esimd', () => {
       expect(result[1]).toBe('0DB');
     });
 
-    test('with a mismatched input', async () => {
+    test('reports an exception when supplied a mismatched input', async () => {
       const exceptionTest = () => esimdInstruction([], []);
       expect(exceptionTest).rejects.toThrow(
         'esimd: Error - Mismatch between the number of data feeds and the parameters of the instruction'
       );
     });
 
-    test('with a failed execution', async () => {
+    test('reports an exception when an execution fails', async () => {
       const exceptionTest = () =>
         esimdInstruction(['a', 'b'], ['c', 'd'], ['e', ' ']);
       expect(exceptionTest).rejects.toThrow(

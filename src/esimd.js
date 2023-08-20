@@ -13,14 +13,8 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
   return async function (...dataSources) {
     dataFeeds = structuredClone(dataSources);
 
-    const alignmentError = checkAlignment(instruction.length, dataFeeds);
-    if (alignmentError) {
-      throw alignmentError;
-    }
-    const capacityError = checkCapacity(executionMode, dataFeeds);
-    if (capacityError) {
-      throw capacityError;
-    }
+    checkAlignment(instruction.length, dataFeeds);
+    checkCapacity(executionMode, dataFeeds);
 
     if (executionMode === ExecutionMode.CACHED) {
       dataFeeds = caches.map((cache, index) => [...cache, ...dataFeeds[index]]);
@@ -34,17 +28,14 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
     )(instruction, dataFeeds);
 
     const results = await Promise.allSettled(executions);
-    const valiationError = validateResults(results);
-    if (valiationError) {
-      throw valiationError;
-    }
+    validateResults(results);
     return results.map((result) => result.value);
   };
 }
 
 function checkAlignment(numParams, dataFeeds) {
   if (dataFeeds.length !== numParams) {
-    return Error(
+    throw Error(
       'esimd: Error - Mismatch between the number of data feeds and the parameters of the instruction'
     );
   }
@@ -57,19 +48,19 @@ function checkCapacity(mode, dataFeeds) {
 
   if (mode === ExecutionMode.MATRIX) {
     if (dataFeeds.length > MAX_NUMBER_OF_FEEDS) {
-      return Error(
+      throw Error(
         `esimd: Error - The number of data feeds exceeds the maximum of ${MAX_NUMBER_OF_FEEDS}.`
       );
     }
     const feedSizes = dataFeeds.map((dataFeed) => dataFeed.length);
     if (Math.max(...feedSizes) > MAX_SIZE_OF_FEED) {
-      return Error(
+      throw Error(
         `esimd: Error - On or more of the data feeds exceeds the maximum size of ${MAX_SIZE_OF_FEED}.`
       );
     }
     const matrixSize = feedSizes.reduce((total, size) => total * size);
     if (matrixSize > MAX_SIZE_OF_MATRIX) {
-      return Error(
+      throw Error(
         `esimd: Error - The calculated size of the output matrix exceeds the maximum size of ${MAX_SIZE_OF_MATRIX}.`
       );
     }
@@ -78,7 +69,7 @@ function checkCapacity(mode, dataFeeds) {
 
 function validateResults(executionResults) {
   if (executionResults.some((result) => result.status !== 'fulfilled')) {
-    return Error('esimd: Error - Instruction execution failed');
+    throw Error('esimd: Error - Instruction execution failed');
   }
 }
 
