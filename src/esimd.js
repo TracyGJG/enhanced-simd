@@ -7,7 +7,12 @@ const ExecutionMode = {
 };
 
 function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
-  let caches = [...Array(instruction.length)].fill([]);
+  const caches =
+    executionMode === ExecutionMode.CACHED
+      ? [...Array(instruction.length)].map((_) => [])
+      : null;
+
+  // let caches = [...Array(instruction.length)].fill([]);
   let dataFeeds;
 
   return async function (...dataSources) {
@@ -16,17 +21,11 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
     checkAlignment(instruction, dataFeeds);
     checkCapacity(executionMode, dataFeeds);
 
-    if (executionMode === ExecutionMode.CACHED) {
-      dataFeeds = caches.map((cache, index) => [...cache, ...dataFeeds[index]]);
-      caches.length = 0;
-      caches.push(...dataFeeds);
-    }
-
     const executions = (
       executionMode === ExecutionMode.MATRIX
         ? supportingFunctions.permute
         : supportingFunctions.transform
-    )(instruction, dataFeeds);
+    )(instruction, supportingFunctions.cacheSurplus(caches, dataFeeds));
 
     const results = await Promise.allSettled(executions);
     validateResults(results);

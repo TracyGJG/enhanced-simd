@@ -26,6 +26,16 @@ function transform(fn, dataFeeds) {
   return buffers.reduce(swapRowColumn, []).map(executeInstruction(fn));
 }
 
+function cacheSurplus(caches, dataFeeds) {
+  if (!caches) return dataFeeds;
+  let dataFeedSize = Infinity;
+  caches.forEach((cache, index) => {
+    cache.push(...dataFeeds[index]);
+    dataFeedSize = Math.min(dataFeedSize, cache.length);
+  });
+  return caches.map((cache) => cache.splice(0, dataFeedSize));
+}
+
 function executeInstruction(fnInstruction) {
   return (dataset) =>
     new Promise(async (resolve, reject) => {
@@ -37,5 +47,6 @@ function executeInstruction(fnInstruction) {
     });
 }
 
+exports.cacheSurplus = cacheSurplus;
 exports.permute = permute;
 exports.transform = transform;
