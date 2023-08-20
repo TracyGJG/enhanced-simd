@@ -6,7 +6,7 @@ const EsimdCached = require('./esimd-cached.js');
 describe('ESIMD Cached', () => {
   test('will cache extra data', async () => {
     const esimdProcess = EsimdCached.esimd(testProcess.process);
-    expect.assertions(8);
+    expect.assertions(11);
 
     const firstPass = await esimdProcess(...dataFeed);
     expect(firstPass.length).toBe(2);
@@ -19,6 +19,11 @@ describe('ESIMD Cached', () => {
     expect(secondPass[1]).toStrictEqual('0C2');
     expect(secondPass[2]).toStrictEqual('1DA');
     expect(secondPass[3]).toStrictEqual('2EB');
+
+    const thirdPass = await esimdProcess(...dataFeed);
+    expect(thirdPass.length).toBe(2);
+    expect(thirdPass[0]).toStrictEqual('FCA');
+    expect(thirdPass[1]).toStrictEqual('0DB');
   });
 
   test('returns undefined when errors occur', async () => {

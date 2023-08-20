@@ -106,8 +106,8 @@ describe('Esimd', () => {
       expect(result[1]).toBe('BD0');
     });
 
-    test('with three populated arrays (without caching)', async () => {
-      expect.assertions(8);
+    test('with three populated arrays (with caching)', async () => {
+      expect.assertions(11);
 
       let result = await esimdInstruction(...testData.populated);
       expect(result.length).toBe(2);
@@ -121,6 +121,11 @@ describe('Esimd', () => {
       expect(result[1]).toBe('0C2');
       expect(result[2]).toBe('1DA');
       expect(result[3]).toBe('2EB');
+
+      result = await esimdInstruction(...reversedTestData);
+      expect(result.length).toBe(2);
+      expect(result[0]).toBe('FCA');
+      expect(result[1]).toBe('0DB');
     });
   });
 
