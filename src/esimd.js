@@ -1,4 +1,4 @@
-const supportingFunctions = require('./supportingFunctions.js');
+const { permute, transform } = require('./supportingFunctions.js');
 
 const ExecutionMode = {
   NO_CACHE: 0,
@@ -11,21 +11,17 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
     executionMode === ExecutionMode.CACHED
       ? [...Array(instruction.length)].map((_) => [])
       : null;
-
-  // let caches = [...Array(instruction.length)].fill([]);
   let dataFeeds;
 
   return async function (...dataSources) {
+    checkAlignment(instruction, dataSources);
+    checkCapacity(executionMode, dataSources);
+
     dataFeeds = structuredClone(dataSources);
 
-    checkAlignment(instruction, dataFeeds);
-    checkCapacity(executionMode, dataFeeds);
-
     const executions = (
-      executionMode === ExecutionMode.MATRIX
-        ? supportingFunctions.permute
-        : supportingFunctions.transform
-    )(instruction, supportingFunctions.cacheSurplus(caches, dataFeeds));
+      executionMode === ExecutionMode.MATRIX ? permute : transform
+    )(instruction, dataFeeds, caches);
 
     const results = await Promise.allSettled(executions);
     validateResults(results);

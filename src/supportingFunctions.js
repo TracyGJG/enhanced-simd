@@ -12,7 +12,8 @@ function permute(fn, dataFeeds) {
   }
 }
 
-function transform(fn, dataFeeds) {
+function transform(fn, dataSources, caches) {
+  let dataFeeds = cacheSurplus(caches, dataSources);
   const minDataFeedLength = Math.min(
     ...dataFeeds.map((dataFeed) => dataFeed.length)
   );
@@ -29,9 +30,9 @@ function transform(fn, dataFeeds) {
 function cacheSurplus(caches, dataFeeds) {
   if (!caches) return dataFeeds;
   let dataFeedSize = Infinity;
-  caches.forEach((cache, index) => {
-    cache.push(...dataFeeds[index]);
-    dataFeedSize = Math.min(dataFeedSize, cache.length);
+  dataFeeds.forEach((dataFeed, index) => {
+    caches[index].push(...dataFeed);
+    dataFeedSize = Math.min(dataFeedSize, caches[index].length);
   });
   return caches.map((cache) => cache.splice(0, dataFeedSize));
 }
@@ -47,6 +48,5 @@ function executeInstruction(fnInstruction) {
     });
 }
 
-exports.cacheSurplus = cacheSurplus;
 exports.permute = permute;
 exports.transform = transform;
