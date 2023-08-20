@@ -5,7 +5,9 @@ function esimd(instruction) {
 
   return async function (...dataSources) {
     dataFeeds = structuredClone(dataSources);
+
     const executions = supportingFunctions.permute(instruction, dataFeeds);
+
     const results = await Promise.allSettled(executions);
     return results.map((result) => result.value);
   };

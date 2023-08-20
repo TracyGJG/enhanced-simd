@@ -5,14 +5,14 @@ function esimd(instruction) {
   let dataFeeds;
 
   return async function (...dataSources) {
-    dataFeeds = caches.map((cache, index) => [
-      ...cache,
-      ...structuredClone(dataSources[index]),
-    ]);
+    dataFeeds = structuredClone(dataSources);
+
+    dataFeeds = caches.map((cache, index) => [...cache, ...dataFeeds[index]]);
     caches.length = 0;
     caches.push(...dataFeeds);
 
     const executions = supportingFunctions.transform(instruction, dataFeeds);
+
     const results = await Promise.allSettled(executions);
     return results.map((result) => result.value);
   };

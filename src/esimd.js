@@ -13,12 +13,13 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
   return async function (...dataSources) {
     dataFeeds = structuredClone(dataSources);
 
-    checkAlignment(instruction.length, dataFeeds);
+    checkAlignment(instruction, dataFeeds);
     checkCapacity(executionMode, dataFeeds);
 
     if (executionMode === ExecutionMode.CACHED) {
       dataFeeds = caches.map((cache, index) => [...cache, ...dataFeeds[index]]);
-      caches = dataFeeds;
+      caches.length = 0;
+      caches.push(...dataFeeds);
     }
 
     const executions = (
@@ -33,8 +34,8 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
   };
 }
 
-function checkAlignment(numParams, dataFeeds) {
-  if (dataFeeds.length !== numParams) {
+function checkAlignment(instruction, dataFeeds) {
+  if (instruction.length !== dataFeeds.length) {
     throw Error(
       'esimd: Error - Mismatch between the number of data feeds and the parameters of the instruction'
     );
