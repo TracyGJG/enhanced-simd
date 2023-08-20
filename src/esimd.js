@@ -11,17 +11,14 @@ function esimd(instruction, executionMode = ExecutionMode.NO_CACHE) {
     executionMode === ExecutionMode.CACHED
       ? [...Array(instruction.length)].map((_) => [])
       : null;
-  let dataFeeds;
 
   return async function (...dataSources) {
     checkAlignment(instruction, dataSources);
     checkCapacity(executionMode, dataSources);
 
-    dataFeeds = structuredClone(dataSources);
-
     const executions = (
       executionMode === ExecutionMode.MATRIX ? permute : transform
-    )(instruction, dataFeeds, caches);
+    )(instruction, structuredClone(dataSources), caches);
 
     const results = await Promise.allSettled(executions);
     validateResults(results);

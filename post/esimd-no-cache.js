@@ -1,12 +1,8 @@
 const { transform } = require('../src/supportingFunctions.js');
 
 function esimd(instruction) {
-  let dataFeeds;
-
   return async function (...dataSources) {
-    dataFeeds = structuredClone(dataSources);
-
-    const executions = transform(instruction, dataFeeds);
+    const executions = transform(instruction, structuredClone(dataSources));
 
     const results = await Promise.allSettled(executions);
     return results.map((result) => result.value);

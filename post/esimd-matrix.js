@@ -1,12 +1,8 @@
 const { permute } = require('../src/supportingFunctions.js');
 
 function esimd(instruction) {
-  let dataFeeds;
-
   return async function (...dataSources) {
-    dataFeeds = structuredClone(dataSources);
-
-    const executions = permute(instruction, dataFeeds);
+    const executions = permute(instruction, structuredClone(dataSources));
 
     const results = await Promise.allSettled(executions);
     return results.map((result) => result.value);

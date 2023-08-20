@@ -13,28 +13,27 @@ function permute(fn, dataFeeds) {
 }
 
 function transform(fn, dataSources, caches) {
-  let dataFeeds = cacheSurplus(caches, dataSources);
-  const minDataFeedLength = Math.min(
-    ...dataFeeds.map((dataFeed) => dataFeed.length)
-  );
-  const buffers = dataFeeds.map((dataFeed) =>
-    dataFeed.splice(0, minDataFeedLength)
-  );
-
   const swapRowColumn = (_, row) =>
     row.map((__, i) => [...(_[i] || []), row[i]]);
 
-  return buffers.reduce(swapRowColumn, []).map(executeInstruction(fn));
+  return cacheSurplus(caches, dataSources)
+    .reduce(swapRowColumn, [])
+    .map(executeInstruction(fn));
 }
 
 function cacheSurplus(caches, dataFeeds) {
-  if (!caches) return dataFeeds;
-  let dataFeedSize = Infinity;
-  dataFeeds.forEach((dataFeed, index) => {
-    caches[index].push(...dataFeed);
-    dataFeedSize = Math.min(dataFeedSize, caches[index].length);
-  });
-  return caches.map((cache) => cache.splice(0, dataFeedSize));
+  const dataFeedSize = dataFeeds.reduce((feedSize, dataFeed, index) => {
+    if (caches) dataFeed.unshift(...caches[index]);
+    return Math.min(feedSize, dataFeed.length);
+  }, Infinity);
+
+  const newCache = dataFeeds.map((dataFeed) => dataFeed.splice(dataFeedSize));
+
+  if (caches) {
+    caches.length = 0;
+    caches.push(...newCache);
+  }
+  return dataFeeds;
 }
 
 function executeInstruction(fnInstruction) {
